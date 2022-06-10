@@ -1,9 +1,8 @@
 {
-  "name": "Assign train/val tags to images",
+  "name": "test app",
   "type": "app",
   "categories": [
-    "Tag",
-    "Training Data"
+    
   ],
   "description": "Assigns tags (train/val) to images. Training apps will use these tags to split data.",
   "docker_image": "supervisely/base-py-sdk:6",
