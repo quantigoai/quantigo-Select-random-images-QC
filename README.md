@@ -18,6 +18,8 @@
 ## Overview
 
 Application separates images from main dataset. User can choose percentage of images that will be separated. Reviewers will use these images to spot check the dataset.
+
+
 **Note**: Application will try to take percentage images from each annotator (If there are any tags or objects), So image count will not be exactly the percentage user chose. for example: if annotator works on 10 images and user inputs 5%, image count should be .5. App will take 1 image in this case (any fraction value will be rounded up to next round number)
 
 <img src="https://www.quantigo.ai/images/sampleImageApp.jpeg"/>
