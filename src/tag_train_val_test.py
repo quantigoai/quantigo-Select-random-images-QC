@@ -58,11 +58,11 @@ def do(**kwargs):
     labelers=[]
     for ds_info in api.dataset.get_list(src_project.id):
         ds_progress = sly.Progress('Dataset: {!r}'.format(ds_info.name), total_cnt=ds_info.images_count)
-        dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
+        #dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
         img_infos_all = api.image.get_list(ds_info.id)
 
         for img_infos in sly.batched(img_infos_all):
-            img_names, img_ids, img_metas = zip(*((x.name, x.id, x.meta) for x in img_infos))
+            #img_names, img_ids, img_metas = zip(*((x.name, x.id, x.meta) for x in img_infos))
 
             ann_infos = api.annotation.download_batch(ds_info.id, img_ids)
             for ann_info in ann_infos:
@@ -86,11 +86,11 @@ def do(**kwargs):
     n=0
     for ds_info in api.dataset.get_list(src_project.id):
         ds_progress = sly.Progress('Dataset: {!r}'.format(ds_info.name), total_cnt=ds_info.images_count)
-        dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
+        #dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
         img_infos_all = api.image.get_list(ds_info.id)
 
         for img_infos in sly.batched(img_infos_all):
-            img_names, img_ids, img_metas = zip(*((x.name, x.id, x.meta) for x in img_infos))
+            #img_names, img_ids, img_metas = zip(*((x.name, x.id, x.meta) for x in img_infos))
 
             ann_infos = api.annotation.download_batch(ds_info.id, img_ids)
             for ann_info in ann_infos:
@@ -117,7 +117,7 @@ def do(**kwargs):
 
         for u in random.sample(list(labeler_dict[l]),totalImagespercentage):
             randomlist.append(u)
-    sly.logger.info('Destination project is created.',extra={'randmlistSize': len(randomlist)})
+    sly.logger.info('Random images number',extra={'randmlistSize': len(randomlist)})
 
 
     
