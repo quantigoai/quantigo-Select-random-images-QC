@@ -7,7 +7,7 @@ task_id = os.environ["TASK_ID"]
 WORKSPACE_ID = int(os.environ['context.workspaceId'])
 PROJECT_ID = int(os.environ['modal.state.slyProjectId'])
 
-_SUFFIX = " Percenatge QC"
+_SUFFIX = " Percentage QC"
 PERCENT = int(os.environ['modal.state.samplePercent'])
 
 @my_app.callback("do")
