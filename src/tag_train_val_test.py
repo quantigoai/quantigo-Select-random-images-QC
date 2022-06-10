@@ -123,24 +123,26 @@ def do(**kwargs):
     
 
 
-
-
-
-
-
-
     ran=0
-    for ds_info in api.dataset.get_list(src_project.id):
-        ds_progress = sly.Progress('Dataset: {!r}'.format(ds_info.name), total_cnt=ds_info.images_count)
-        dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
-        img_infos_all = api.image.get_list(ds_info.id)
+    for dataset in api.dataset.get_list(src_project.id):
+        
+        datasett=dataset.name
+        
+        dst_dataset = api.dataset.create(dst_project.id, dataset.name)
+        images = api.image.get_list(dataset.id)
+
+        
+        
         annotation=[]
-        for img_infos in sly.batched(img_infos_all):
-            img_metas = zip(*((x.meta) for x in img_infos))
+       
+        for batch in sly.batched(images):
+            
             dst_image_names=[]
             dst_image_ids=[]
+            image_ids = [image_info.id for image_info in batch]
+            image_names = [image_info.name for image_info in batch]
 
-            ann_infos = api.annotation.download_batch(ds_info.id, img_ids)
+            ann_infos = api.annotation.download_batch(dataset.id, image_ids)
 
             anns_to_upload = []
             for ann_info in ann_infos:
@@ -150,15 +152,46 @@ def do(**kwargs):
                     dst_image_names.append(ann_info[1])
                     dst_image_ids.append(ann_info[0])
                     ann = sly.Annotation.from_json(data, dst_project_meta)
-                    anns_to_upload.append(ann)                                     
-                    
+                    anns_to_upload.append(ann)
                 ran+=1
-            
             dst_image_infos = api.image.upload_ids(dst_dataset.id, dst_image_names, dst_image_ids)
             dst_image_ids = [image_info.id for image_info in dst_image_infos]
             api.annotation.upload_anns(dst_image_ids, anns_to_upload)
 
-            ds_progress.iters_done_report(len(img_infos))
+
+
+
+
+    # ran=0
+    # for ds_info in api.dataset.get_list(src_project.id):
+    #     ds_progress = sly.Progress('Dataset: {!r}'.format(ds_info.name), total_cnt=ds_info.images_count)
+    #     dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
+    #     img_infos_all = api.image.get_list(ds_info.id)
+    #     annotation=[]
+    #     for img_infos in sly.batched(img_infos_all):
+    #         img_metas = zip(*((x.meta) for x in img_infos))
+    #         dst_image_names=[]
+    #         dst_image_ids=[]
+
+    #         ann_infos = api.annotation.download_batch(ds_info.id, img_ids)
+
+    #         anns_to_upload = []
+    #         for ann_info in ann_infos:
+    #             ann = sly.Annotation.from_json(ann_info.annotation,src_project_meta )
+    #             data = ann_info.annotation
+    #             if ran in randomlist:
+    #                 dst_image_names.append(ann_info[1])
+    #                 dst_image_ids.append(ann_info[0])
+    #                 ann = sly.Annotation.from_json(data, dst_project_meta)
+    #                 anns_to_upload.append(ann)                                     
+                    
+    #             ran+=1
+            
+    #         dst_image_infos = api.image.upload_ids(dst_dataset.id, dst_image_names, dst_image_ids)
+    #         dst_image_ids = [image_info.id for image_info in dst_image_infos]
+    #         api.annotation.upload_anns(dst_image_ids, anns_to_upload)
+
+    #         ds_progress.iters_done_report(len(img_infos))
 
     api.task.set_output_project(task_id, dst_project.id, dst_project.name)
     my_app.stop()
