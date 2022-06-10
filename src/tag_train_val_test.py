@@ -62,7 +62,7 @@ def do(**kwargs):
         img_infos_all = api.image.get_list(ds_info.id)
 
         for img_infos in sly.batched(img_infos_all):
-            #img_names, img_ids, img_metas = zip(*((x.name, x.id, x.meta) for x in img_infos))
+            img_names, img_ids, img_metas = zip(*((x.name, x.id, x.meta) for x in img_infos))
 
             ann_infos = api.annotation.download_batch(ds_info.id, img_ids)
             for ann_info in ann_infos:
