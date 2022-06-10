@@ -7,7 +7,8 @@ task_id = os.environ["TASK_ID"]
 WORKSPACE_ID = int(os.environ['context.workspaceId'])
 PROJECT_ID = int(os.environ['modal.state.slyProjectId'])
 
-_SUFFIX = "Percenatge QC"
+_SUFFIX = " Percenatge QC"
+PERCENT = int(os.environ['modal.state.samplePercent'])
 
 @my_app.callback("do")
 @sly.timeit
@@ -33,26 +34,7 @@ def do(**kwargs):
     dst_project_meta = src_project_meta
     api.project.update_meta(dst_project.id, dst_project_meta.to_json())
 
-    # def convert_annotation(src_ann, dst_project_meta):
-    #     new_labels = []
-    #     for idx, lbl in enumerate(src_ann.labels):
-    #         lbl: sly.Label
-    #         if lbl.obj_class.geometry_type == sly.AnyGeometry:
-    #             actual_geometry = type(lbl.geometry)
-
-    #             new_class_name = "{}_{}".format(lbl.obj_class.name, actual_geometry.geometry_name())
-    #             new_class = dst_project_meta.get_obj_class(new_class_name)
-    #             if new_class is None:
-    #                 new_class = sly.ObjClass(name=new_class_name,
-    #                                          geometry_type=actual_geometry,
-    #                                          color=sly.color.random_rgb())
-    #                 dst_project_meta = dst_project_meta.add_obj_class(new_class)
-    #                 api.project.update_meta(dst_project.id, dst_project_meta.to_json())
-
-    #             new_labels.append(lbl.clone(obj_class=new_class))
-    #         else:
-    #             new_labels.append(lbl)
-    #     return src_ann.clone(labels=new_labels), dst_project_meta
+   
 
     #getLabelers
     labelers=[]
@@ -110,17 +92,11 @@ def do(**kwargs):
 
     randomlist=[]
     for l in labelers:
-
-        totalImages=len(labeler_dict[l])
-
-        totalImagespercentage=math.ceil(len(labeler_dict[l])*(10/100))
+        totalImagespercentage=math.ceil(len(labeler_dict[l])*(PERCENT/100))
 
         for u in random.sample(list(labeler_dict[l]),totalImagespercentage):
             randomlist.append(u)
     sly.logger.info('Random images number',extra={'randmlistSize': len(randomlist)})
-
-
-    
 
 
     ran=0
@@ -157,42 +133,6 @@ def do(**kwargs):
             dst_image_infos = api.image.upload_ids(dst_dataset.id, dst_image_names, dst_image_ids)
             dst_image_ids = [image_info.id for image_info in dst_image_infos]
             api.annotation.upload_anns(dst_image_ids, anns_to_upload)
-
-
-
-
-
-    # ran=0
-    # for ds_info in api.dataset.get_list(src_project.id):
-    #     ds_progress = sly.Progress('Dataset: {!r}'.format(ds_info.name), total_cnt=ds_info.images_count)
-    #     dst_dataset = api.dataset.create(dst_project.id, ds_info.name)
-    #     img_infos_all = api.image.get_list(ds_info.id)
-    #     annotation=[]
-    #     for img_infos in sly.batched(img_infos_all):
-    #         img_metas = zip(*((x.meta) for x in img_infos))
-    #         dst_image_names=[]
-    #         dst_image_ids=[]
-
-    #         ann_infos = api.annotation.download_batch(ds_info.id, img_ids)
-
-    #         anns_to_upload = []
-    #         for ann_info in ann_infos:
-    #             ann = sly.Annotation.from_json(ann_info.annotation,src_project_meta )
-    #             data = ann_info.annotation
-    #             if ran in randomlist:
-    #                 dst_image_names.append(ann_info[1])
-    #                 dst_image_ids.append(ann_info[0])
-    #                 ann = sly.Annotation.from_json(data, dst_project_meta)
-    #                 anns_to_upload.append(ann)                                     
-                    
-    #             ran+=1
-            
-    #         dst_image_infos = api.image.upload_ids(dst_dataset.id, dst_image_names, dst_image_ids)
-    #         dst_image_ids = [image_info.id for image_info in dst_image_infos]
-    #         api.annotation.upload_anns(dst_image_ids, anns_to_upload)
-
-    #         ds_progress.iters_done_report(len(img_infos))
-
     api.task.set_output_project(task_id, dst_project.id, dst_project.name)
     my_app.stop()
 
