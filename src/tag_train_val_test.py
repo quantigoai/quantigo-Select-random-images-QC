@@ -30,7 +30,7 @@ def do(**kwargs):
     sly.logger.info('Destination project is created.',
                     extra={'project_id': dst_project.id, 'project_name': dst_project.name})
 
-    dst_project_meta = src_project_meta.clone(obj_classes=src_project_meta)
+    dst_project_meta = src_project_meta
     api.project.update_meta(dst_project.id, dst_project_meta.to_json())
 
     # def convert_annotation(src_ann, dst_project_meta):
