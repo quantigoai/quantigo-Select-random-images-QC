@@ -1,15 +1,14 @@
 {
-  "name": "test app",
+  "name": "QC-Select Random Images",
   "type": "app",
   "categories": [
     
   ],
-  "description": "Assigns tags (train/val) to images. Training apps will use these tags to split data.",
+  "description": "Select Random percentage of image for QC",
   "docker_image": "supervisely/base-py-sdk:6",
   "main_script": "src/tag_train_val_test.py",
   "modal_template": "src/modal.html",
   "modal_template_state": {},
-  "gui_template": "src/gui.html",
   "task_location": "workspace_tasks",
   "isolate": true,
   "icon": "https://i.imgur.com/f4HAo01.png",
@@ -18,7 +17,7 @@
     "target": [
       "images_project"
     ],
-    "context_category": "Training data"
+    "context_category": ""
   },
   "poster": "https://i.imgur.com/rjoVeXV.png"
 }
